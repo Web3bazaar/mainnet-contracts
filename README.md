@@ -19,7 +19,7 @@ The Web3 Bazaar dApp is supported by non-custodial escrow contracts that enable 
 
 | Network    | Contract address |
 | ---          | ---        |
-| Polygon | [0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44](0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44) |
+| Polygon | [0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44](https://polygonscan.com/address/0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44) |
 
 ## 🔄 Smart contract state machine:
 
