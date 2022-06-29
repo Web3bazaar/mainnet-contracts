@@ -2,7 +2,7 @@
 
 ## 👋 About this repo
 
-This repo contains the solidity code used in the Bazaar smart contracts hosted on the compatible EVM testnets.
+This repo contains the solidity code used in the Bazaar smart contracts hosted on the compatible EVM mainnets.
 
 ## 📝 About the Smart contract
 
