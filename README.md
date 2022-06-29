@@ -1,7 +1,5 @@
 # Mainnet Contracts
 
-Contract address : 0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44
-
 ## 👋 About this repo
 
 This repo contains the solidity code used in the Bazaar smart contracts hosted on the compatible EVM testnets.
@@ -21,7 +19,7 @@ The Web3 Bazaar dApp is supported by non-custodial escrow contracts that enable 
 
 | Network    | Contract address |
 | ---          | ---        |
-| Polygon | |
+| Polygon | [0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44](0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44) |
 
 ## 🔄 Smart contract state machine:
 
