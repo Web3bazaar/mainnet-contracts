@@ -1,4 +1,4 @@
-# Testnet Contracts
+# Mainnet Contracts
 
 ## 👋 About this repo
 
@@ -15,7 +15,7 @@ The Web3 Bazaar dApp is supported by a non-custodial escrow contracts that enabl
 - <b>bundle transaction enabled</b>: asset owners can do 1:1 trades or mix assets in a bundle to trade for another set of assets owned by the counter-party.
 
 
-### Testnets available
+### Networks available
 
 | Network    | Contract address |
 | ---          | ---        |
