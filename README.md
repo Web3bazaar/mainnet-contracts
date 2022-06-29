@@ -90,7 +90,7 @@ Get Trade methods gives information about the trade based on the `tradeId and us
 | userWallet     |   user address       |
 
 
-## 💀 Errors List
+## 💀 Error List
 
 
 | Code    | Description  |
