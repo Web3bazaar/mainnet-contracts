@@ -8,7 +8,7 @@ This repo contains the solidity code used in the Bazaar smart contracts hosted o
 
 ## 📝 About the Smart contract
 
-The Web3 Bazaar dApp is supported by a non-custodial escrow contracts that enable peer-to-peer swaps of ERC-20, ERC-721 or ERC-1155 tokens. Contracts' only purpose is to switch asset ownership from one wallet address to another under the trades pre-established in it. 
+The Web3 Bazaar dApp is supported by non-custodial escrow contracts that enable peer-to-peer swaps of ERC-20, ERC-721 or ERC-1155 tokens. Contracts' only purpose is to switch asset ownership from one wallet address to another under the trades pre-established in it. 
 
 ### Bazaar smart contracts are:
 - <b>fully permisionless</b>: every token from a supported standard can be traded by every wallet withouth censorship.
