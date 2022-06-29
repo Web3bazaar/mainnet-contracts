@@ -98,8 +98,8 @@ Get Trade methods gives information about the trade based on the `tradeId and us
 | CREATOR_PARMS_LEN_ERROR     |   Error sending parameters for creator        |
 | EXECUTER_PARMS_LEN_ERROR    |   Error sending parameters for executer       |
 | ERR_NOT_OWN_ID_ERC721       |   User isn't the other ERC721 ID asset        |
-| ERR_NOT_ALLOW_TO_TRANSER_ITENS_ERC721     |  User did not give permission to spend ERC721 |
+| ERR_NOT_ALLOWED_TO_TRANSER_ITEMS_ERC721     |  User did not give permission to spend ERC721 |
 | ERR_NOT_ENOUGH_FUNDS_ERC20        |   The user has not have enough ERC20                           |
-| ERR_NOT_ALLOW_SPEND_FUNDS         |   User did not give permission to spend ERC20         |
+| ERR_NOT_ALLOWED_TO_SPEND_FUNDS         |   User did not give permission to spend ERC20         |
 | ERR_NOT_ENOUGH_FUNDS_ERC1155      |   The user has not have enough asset on ERC1155                  |
-| ERR_NOT_ALLOW_TO_TRANSER_ITENS_ERC1155     |   ser did not give permission to spend ERC1155        |
+| ERR_NOT_ALLOWED_TO_TRANSER_ITEMS_ERC1155     |   ser did not give permission to spend ERC1155        |
