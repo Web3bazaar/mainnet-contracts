@@ -23,7 +23,7 @@ The Web3 Bazaar dApp is supported by non-custodial escrow contracts that enable 
 
 ## 🔄 Smart contract state machine:
 
-The contract handles a state machine within in order to determine and limit the parties interaction with it according to the actions already performed.
+The contract handles a state machine within in order to determine and limit the methods that are interactable according to the actions already performed by the parties.
 
 | State    | Description |
 | ---          | ---        |
