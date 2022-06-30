@@ -8,7 +8,7 @@ This repo contains the solidity code used in the Bazaar smart contracts hosted o
 
 The Web3 Bazaar dApp is supported by non-custodial escrow contracts that enable peer-to-peer swaps of ERC-20, ERC-721 or ERC-1155 tokens. Contracts' only purpose is to switch asset ownership from one wallet address to another under the trades pre-established in it. 
 
-### Bazaar smart contracts are:
+### Bazaar contracts are:
 - <b>fully permisionless</b>: every token from a supported standard can be traded by every wallet withouth censorship.
 - <b>non-custodial</b>: Your assets never leave your wallet until the trade is complete.
 - <b>free to use</b>: no fees are charged to access or swap assets within the Bazaar (apart from gas fees)
@@ -21,9 +21,9 @@ The Web3 Bazaar dApp is supported by non-custodial escrow contracts that enable 
 | ---          | ---        |
 | Polygon | [0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44](https://polygonscan.com/address/0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44) |
 
-## 🔄 Smart contract state machine:
+## 🔄 Contract state machine:
 
-The contract handles a state machine within in order to determine and limit the methods that are interactable according to the actions already performed by the parties.
+The contracts handle a state machine within in order to determine and limit the methods that are interactable according to the actions already performed by the parties.
 
 | State    | Description |
 | ---          | ---        |
