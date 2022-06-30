@@ -36,9 +36,9 @@ The contract handles a state machine within in order to determine and limit the 
 ![this screenshot](/assets/trade_status.png)
 
 
-## ✨ Smart contract Methods
+## ✨ Contract Methods
 
-### 1.Start trade
+### 1.startTrade
 
 First, the trade must be submitted by the first counterpart (creator). Creator provides the trade terms and smart contract addresses of the assets both parties should commit to the trade. 
 It proceeeds to  perform validations to confirm if all the parameters of the trade are valid. Contract checks if all the assets belong to the wallet addresses provided and if the creator gave the necessary permissions for the Bazaar smart contract to perform this asset exchange. The code detects if some issue occurs and throws an error code to the user as describbed in the ERROR LIST at the end of this Readme. 
@@ -63,7 +63,7 @@ It proceeeds to  perform validations to confirm if all the parameters of the tra
 The contract then internally stores all the trade terms and assets' data depicted below:
 ![Fig.1](/assets/trades-image.png)
 
-### 2.Execute trade
+### 2.executeTrade
 
 When a trade is submitted and enters `created` status, the counter-party becomes able to execute it. It must have approved the Bazzar contract permissions to move its assets. 
 A verification of the ownership of the assets provided in the trade terms is performed again before executing it.
