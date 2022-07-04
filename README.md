@@ -40,8 +40,8 @@ The contracts handle a state machine within in order to determine and limit the 
 
 ### 1.startTrade
 
-First, the trade must be submitted by the first counterpart (creator). Creator provides the trade terms and smart contract addresses of the assets both parties should commit to the trade. 
-It proceeeds to  perform validations to confirm if all the parameters of the trade are valid. Contract checks if all the assets belong to the wallet addresses provided and if the creator gave the necessary permissions for the Bazaar smart contract to perform this asset exchange. The code detects if some issue occurs and throws an error code to the user as describbed in the ERROR LIST at the end of this Readme. 
+A trade is started by the Creator who provides the terms (assets' smart contract addresses and counter-party wallet address).
+The smart contract procceeds with its validation an checks if all the assets belong to the wallet addresses provided and if the creator gave the necessary permissions for the smart contract to perform the swap. if an issue is detected the, the trade isn't submitted and the code returns an error as describbed in the ERROR LIST at the end of this Readme. 
 
 #### Method Description
 
@@ -65,7 +65,7 @@ The contract then internally stores all the trade terms and assets' data depicte
 
 ### 2.executeTrade
 
-When a trade is submitted and enters `created` status, the counter-party becomes able to execute it. It must have approved the Bazzar contract permissions to move its assets. 
+When a trade is submitted and enters `created` status and the counter-party becomes able to execute it. to do so, counter-party must first approve the contract methods to move its assets. 
 A verification of the ownership of the assets provided in the trade terms is performed again before executing it.
 Upon succesful verification the contract executes the swap and changes the status of the trade to `Completed`
 
@@ -82,7 +82,7 @@ Upon succesful verification the contract executes the swap and changes the statu
 
 ### 3.getTrade
 
-Get Trade methods gives information about the trade based on the `tradeId and user wallet it returns asset's stored for that trade.
+Get Trade methods gives information about the trade based on the `tradeId and user wallet. It returns asset's swapped in that trade.
 
 | Paramater name | Description  |
 | ---     |   ---        |
