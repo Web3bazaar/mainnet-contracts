@@ -36,6 +36,8 @@ contract MultiAccessControl {
     }
 }
 
+
+
 contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessControl
 {
     event NewTrade(address indexed creator, address indexed executor, uint256 tradeId);
@@ -112,41 +114,41 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
         return (_tradeTokenAddress, _tradeTokenIds, _tradeTokenAmount, _tradeType  );
     }
     function verifyERC721 (address from, address tokenAddress, uint256 tokenId, bool verifyAproval) internal view returns (bool){
-        require(from == ERC721(tokenAddress).ownerOf{gas:100000}(tokenId), 'WEB3BAZAAR_ERROR: ERR_NOT_OWN_ID_ERC721');
+        require(from == ERC721(tokenAddress).ownerOf(tokenId), 'WEB3BAZAAR_ERROR: ERR_NOT_OWN_ID_ERC721');
         if(verifyAproval){
-            require( ERC721(tokenAddress).isApprovedForAll{gas:100000}( from, address(this) ) , 'WEB3BAZAR_ERROR: ERR_NOT_ALLOW_TO_TRANSER_ITENS_ERC721');
+            require( ERC721(tokenAddress).isApprovedForAll( from, address(this) ) , 'WEB3BAZAR_ERROR: ERR_NOT_ALLOW_TO_TRANSER_ITENS_ERC721');
         }
         return true;
     }
     function verifyERC20 (address from, address tokenAddress, uint256 amount, bool verifyAproval ) internal view returns (bool){
-        require(amount <= IERC20(tokenAddress).balanceOf{gas:100000}(from), 'WEB3BAZAAR_ERROR: ERR_NOT_ENOUGH_FUNDS_ERC20');
+        require(amount <= IERC20(tokenAddress).balanceOf(from), 'WEB3BAZAAR_ERROR: ERR_NOT_ENOUGH_FUNDS_ERC20');
         if(verifyAproval){
-            require(amount <= IERC20(tokenAddress).allowance{gas:100000}(from, address(this) ), 'WEB3BAZAR_ERROR: ERR_NOT_ALLOW_SPEND_FUNDS');
+            require(amount <= IERC20(tokenAddress).allowance(from, address(this) ), 'WEB3BAZAR_ERROR: ERR_NOT_ALLOW_SPEND_FUNDS');
         }    
         return true;
     }
     function verifyERC1155 (address from, address tokenAddress, uint256 amount, uint256 tokenId, bool verifyAproval) internal view returns (bool){
         require(tokenId > 0, 'WEB3BAZAAR_ERROR: STAKE_ERC1155_ID_SHOULD_GREATER_THEN_0');
-        require(amount > 0 && amount <= ERC1155(tokenAddress).balanceOf{gas:100000}(from, tokenId), 'WEB3BAZAAR_ERROR: ERR_NOT_ENOUGH_FUNDS_ERC1155');
+        require(amount > 0 && amount <= ERC1155(tokenAddress).balanceOf(from, tokenId), 'WEB3BAZAAR_ERROR: ERR_NOT_ENOUGH_FUNDS_ERC1155');
         if(verifyAproval){
-            require( ERC1155(tokenAddress).isApprovedForAll{gas:100000}( from, address(this) ) , 'WEB3BAZAR_ERROR: ERR_NOT_ALLOW_TO_TRANSER_ITENS_ERC1155');
+            require( ERC1155(tokenAddress).isApprovedForAll( from, address(this) ) , 'WEB3BAZAR_ERROR: ERR_NOT_ALLOW_TO_TRANSER_ITENS_ERC1155');
         }    
         return true;
     }
     function swapERC721 (address from, address to, address tokenAddress, uint256 tokenId) internal returns (bool){
         verifyERC721(from, tokenAddress, tokenId, true);
-        ERC721(tokenAddress).safeTransferFrom{gas:100000}(from, to , tokenId, '');
+        ERC721(tokenAddress).safeTransferFrom(from, to , tokenId, '');
         return true;
     }
     function swapERC1155 (address from, address to, address tokenAddress, uint256 tokenId, uint256 amount) internal returns (bool)
     {
         verifyERC1155(from, tokenAddress, amount, tokenId, true );
-        ERC1155(tokenAddress).safeTransferFrom{gas:100000}(from, to , tokenId, amount, '0x01' );
+        ERC1155(tokenAddress).safeTransferFrom(from, to , tokenId, amount, '0x01' );
         return true;
     }
     function swapERC20 (address from, address to, address tokenAddress, uint256 amount) internal returns (bool){
         verifyERC20(from, tokenAddress, amount, true );
-        IERC20(tokenAddress).transferFrom{gas:100000}(from, to , amount);
+        IERC20(tokenAddress).transferFrom(from, to , amount);
         return true;
     }
     function executeTrade(uint256 tradeId )  public returns(uint256)
@@ -202,10 +204,13 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
     }
 
     function startTrade( address[] memory creatorTokenAddress, uint256[] memory creatorTokenId, uint256[] memory creatorAmount, uint8[]  memory creatorTokenType,
-                         address  executerAddress , address[] memory executorTokenAddress, uint256[] memory executorTokenId, uint256[] memory executorAmount, uint8[] memory executorTokenType  )  public returns(uint256)
+                        address  executerAddress , address[] memory executorTokenAddress, uint256[] memory executorTokenId, uint256[] memory executorAmount, uint8[] memory executorTokenType  )  public returns(uint256)
     {
+
+        address creatorAddress = msg.sender;
         require(executerAddress != address(0), 'WEB3BAZAAR_ERROR: EXECUTER_ADDRESS_NOT_VALID' );
-        require(executerAddress != msg.sender, 'WEB3BAZAAR_ERROR: CREATOR_AND_EXECUTER_ARE_EQUAL');
+        require(creatorAddress != address(0),  'WEB3BAZAAR_ERROR: CREATOR_ADDRESS_NOT_VALID' );
+        require(executerAddress != creatorAddress, 'WEB3BAZAAR_ERROR: CREATOR_AND_EXECUTER_ARE_EQUAL');
         require(creatorTokenAddress.length  > 0, 'WEB3BAZAAR_ERROR: CREATOR_TOKEN_ADDRESS_EMPTY');
         require(executorTokenAddress.length > 0, 'WEB3BAZAAR_ERROR: EXECUTER_TOKEN_ADDRESS_EMPTY');
 
@@ -216,25 +221,25 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
 
         _tradeId++;
         _transactions[_tradeId].id = _tradeId;
-        _transactions[_tradeId].creator = msg.sender;
+        _transactions[_tradeId].creator = creatorAddress;
         _transactions[_tradeId].executor = executerAddress;
         for (uint256 i = 0; i < creatorTokenAddress.length; i++) 
         {
             require(creatorTokenAddress[i] != address(0), 'WEB3BAZAAR_ERROR: CREATOR_TOKEN_ADDRESS_IS_ZERO' );
             verifyTradeIntegrity(creatorTokenAddress[i], creatorTokenId[i], creatorAmount[i], creatorTokenType[i] );
             if(TradeType(creatorTokenType[i]) == TradeType.ERC20){
-                verifyERC20(msg.sender, creatorTokenAddress[i], creatorAmount[i], true);
+                verifyERC20(creatorAddress, creatorTokenAddress[i], creatorAmount[i], true);
             }else if(TradeType(creatorTokenType[i]) == TradeType.ERC721){
-                verifyERC721(msg.sender, creatorTokenAddress[i], creatorTokenId[i], true );
+                verifyERC721(creatorAddress, creatorTokenAddress[i], creatorTokenId[i], true );
             }else if(TradeType(creatorTokenType[i]) == TradeType.ERC1155){
-                verifyERC1155(msg.sender, creatorTokenAddress[i], creatorAmount[i], creatorTokenId[i], true );
+                verifyERC1155(creatorAddress, creatorTokenAddress[i], creatorAmount[i], creatorTokenId[i], true );
             }
-            _transactions[_tradeId]._traders[msg.sender].tokenAddressIdx.push(i+1);
-            _transactions[_tradeId]._traders[msg.sender]._counterpart[i+1].contractAddr = creatorTokenAddress[i];
-            _transactions[_tradeId]._traders[msg.sender]._counterpart[i+1].idAsset = creatorTokenId[i];
-            _transactions[_tradeId]._traders[msg.sender]._counterpart[i+1].amount  = creatorAmount[i];
-            _transactions[_tradeId]._traders[msg.sender]._counterpart[i+1].traderType = TradeType(creatorTokenType[i]);
-            _transactions[_tradeId]._traders[msg.sender]._counterpart[i+1].traderStatus = UserStatus.OPEN;
+            _transactions[_tradeId]._traders[creatorAddress].tokenAddressIdx.push(i+1);
+            _transactions[_tradeId]._traders[creatorAddress]._counterpart[i+1].contractAddr = creatorTokenAddress[i];
+            _transactions[_tradeId]._traders[creatorAddress]._counterpart[i+1].idAsset = creatorTokenId[i];
+            _transactions[_tradeId]._traders[creatorAddress]._counterpart[i+1].amount  = creatorAmount[i];
+            _transactions[_tradeId]._traders[creatorAddress]._counterpart[i+1].traderType = TradeType(creatorTokenType[i]);
+            _transactions[_tradeId]._traders[creatorAddress]._counterpart[i+1].traderStatus = UserStatus.OPEN;
         }
         for (uint i = 0; i < executorTokenAddress.length; i++) 
         {
@@ -255,12 +260,14 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
             _transactions[_tradeId]._traders[executerAddress]._counterpart[i+1].traderStatus = UserStatus.OPEN;
         }
         _transactions[_tradeId].tradeStatus = TradeStatus.TRADE_CREATED;
-        _openTrades[msg.sender].push(_tradeId);
+        _openTrades[creatorAddress].push(_tradeId);
         _openTrades[executerAddress].push(_tradeId);
-        emit NewTrade(msg.sender, executerAddress, _tradeId );
+        emit NewTrade(creatorAddress, executerAddress, _tradeId );
         openTradeCount = openTradeCount + 1;
         return _tradeId;
+
     }
+
 
     function tradePerUser(address u) public view returns(uint256[] memory ){
         return (_openTrades[u]);
