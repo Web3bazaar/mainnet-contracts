@@ -28,8 +28,8 @@ The contracts handle a state machine within in order to determine and limit the 
 | State    | Description |
 | ---          | ---        |
 | Created | Terms are established in the contract and counter-party can now execute the trade. Both parties can change the state to "Cancelled"|
-| Completed     | Counter-party executed the trade and assets swapped wallets. The trade is now in a state can't be executed anymore |
-| Cancelled      | One of both parties cancelled the trade and it can't be executed anymore |
+| Completed     | Counter-party executed the trade and assets swapped wallets. The trade can't be executed anymore |
+| Cancelled      | One of the parties cancelled the trade and it can't be executed anymore |
 
 ### State flows
 
