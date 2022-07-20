@@ -1,5 +1,52 @@
 # Mainnet Contracts
 
+## style guideline
+https://docs.soliditylang.org/en/v0.8.15/style-guide.html
+
+
+## travis
+https://github.com/gongf05/travis-solidity-testing-demo
+
+
+## Contract audit fixs
+
+### Checked Items
+Default Visibility :  change to external the public there is not used by contract
+Unchecked Call Return Value  : solve with safeTranfer20
+Presence of unused variables : remove used vars from code
+Gas Limit and Loops          : will limit the number of tranferable assets []
+Style guide violation        : use a formatter to ensure the rules move the function for visibility etc
+Requirements Compliance      : 
+Environment                  : []
+Tests Coverage               : []
+
+#### issues 
+### high
+1. Insufficient balance.
+  drBrown: its by design we're an non-custodial service
+
+2. Denial of Service.
+  drBrown: limit the number of asset from a part on a trade
+
+### Medium 
+1. Unchecked return value.  
+   drBrown : follow the suggestion and use openzepplin SafeERC20 that check if transaction was reverted
+   // https://docs.openzeppelin.com/contracts/2.x/api/token/erc20#SafeERC20
+2. Not suitable data type
+   drBrown : use the suggestion and move uint8 to bool
+
+### low
+1. Unused Variable.
+   drBrown : Compare the input var tokenType should be anynumber between ENUM value ERC20 and NATIVE this comparation 
+2. Unused variable.
+    drBrown : _symbol variable was removed
+3. Function can be declared external.
+   drBrown : change every suggested method visibilty for external except for balanceOfBatch, set Approval because its not implement by our conctract its 
+    inherited from other contracts. 
+4. Native TradeType is never used.
+   drBrowm : was removed 
+
+
 ## 👋 About this repo
 
 This repo contains the solidity code used in the Bazaar smart contracts hosted on the compatible EVM mainnets.

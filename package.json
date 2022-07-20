@@ -1,0 +1,21 @@
+{
+  "name": "web3bazaar-mainnet-contract",
+  "version": "1.0.0",
+  "description": "web3bazaar contract project",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "compile": "truffle compile",
+    "test": "truffle test --network development",
+    "coverage": "truffle run coverage --network development"
+  },
+  "author": "drbrown",
+  "license": "ISC",
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.7.1",
+    "coveralls": "^3.1.1",
+    "solidity-coverage": "^0.7.21"
+  }
+}
