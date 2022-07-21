@@ -81,9 +81,9 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
 
     // External functions
 
-    /// cancelTrade before the trade was completed both of the users can cancel the trade. 
-    /// @param tradeId tradeId for cancel
-    /// @dev change the status of the trade to cancelled. That way executer cannot finish the trade
+    /// cancelTrade -  To invalidate an already created trade. Can be called by both the trade creator or executor
+    /// @param tradeId to cancel
+    /// @dev changes the status of the trade to cancelled
     /// @return all true  if trade was cancelled
     function cancelTrade(uint256 tradeId) external  returns (bool)
     {
@@ -95,9 +95,9 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
         return true;
     }
   
-    /// execute trade by the executer the asset will be swaps between the two users
-    /// @param tradeId tradeId for cancel
-    /// @dev the assets from both users will verified again to check if both users still owen that assets then the swaps will ocurr. 
+    /// executeTrade - to confirm a swap proposed by a creator counter-party. executor calls it to initiate the trade 
+    /// @param tradeId to execute trade
+    /// @dev verifies assets ownership from both parties before swapping them.
     /// @return id of the trade
     function executeTrade(uint256 tradeId ) external returns(uint256)
     {
@@ -143,18 +143,19 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
     }
 
    
-    /// initiate the trade.
-    /// @param creatorTokenAddress array containing the address of the contract for each asset for creator
-    /// @param creatorTokenId array containing tokenId for each asset (only applicable for erc721 and erc1155) for creator
-    /// @param creatorAmount array containing the amount of each token (only applicable for erc1155 and erc20) for creator
-    /// @param creatorTokenType array containing the type of token (erc20, erc721 and erc1155) for creator
-    /// @param executerAddress wallet of conter-party user
-    /// @param executorTokenAddress array containing the address of the contract for each asset for executer
-    /// @param executorTokenId array containing tokenId for each asset (only applicable for erc721 and erc1155) for executer
-    /// @param executorAmount array containing the amount of each token (only applicable for erc1155 and erc20) for executer
-    /// @param executorTokenType array containing the type of token (erc20, erc721 and erc1155) for executer
-    /// @dev this method check if both users own the assets that creator wants to swap and then initiate the trade with executer
-    /// @return all trades open for a user
+    /// starttrade - to verify creator and executor assets ownership and start the trade
+    
+    /// @param creatorTokenAddress array containing the address of the contract of each asset to be swapped by the creator
+    /// @param creatorTokenId array containing tokenId of each asset (only applicable for erc721 and erc1155) to be swapped by the creator
+    /// @param creatorAmount array containing the amount of each token (only applicable for erc1155 and erc20) to be swapped by the creator
+    /// @param creatorTokenType array containing the token standard of each asset (erc20, erc721 and erc1155) to be swapped by the creator
+    /// @param executerAddress wallet address of counterparty
+    /// @param executorTokenAddress array containing the address of the contract of each asset to be swapped by the executor
+    /// @param executorTokenId array containing tokenId of each asset (only applicable for erc721 and erc1155) to be swapped by the executor
+    /// @param executorAmount array containing the amount of each token (only applicable for erc1155 and erc20) to be swapped by the executor
+    /// @param executorTokenType array containing the token standard of each asset (erc20, erc721 and erc1155) to be swapped by the executor
+    /// @dev checks if both users own all assets requested by the trade creator and initiates the trade if verification returns true
+    /// @return all trades created by a user
     function startTrade( address[] memory creatorTokenAddress, uint256[] memory creatorTokenId, uint256[] memory creatorAmount, uint8[]  memory creatorTokenType,
                         address  executerAddress , address[] memory executorTokenAddress, uint256[] memory executorTokenId, uint256[] memory executorAmount, uint8[] memory executorTokenType  ) external returns(uint256)
     {
@@ -222,23 +223,23 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
 
     
 
-    // External functions  that are view
+    // External visible functions 
 
 
-    /// this method return some information about the trade based on tradeId
-    /// @param tradeId for trade caller wants obtain information
-    /// @dev index and return some information about the trade
-    /// @return creator address, executer address and trade status
+    /// getTrade - this method returns data about the trade based on tradeId
+    /// @param tradeId to obtain information
+    /// @dev indexes and returns information about the trade
+    /// @return creator address, executor address and trade status
     function getTrade(uint256 tradeId) external view returns (address, address,uint8)
     {
         Trade storage store = _transactions[tradeId];
         return (store.creator, store.executor, uint8(store.tradeStatus));
     }
 
-    /// this method return some information about the trade based on tradeId and userWallet
-    /// @param tradeId for trade caller wants obtain information
-    /// @param userWallet user address to check open trades
-    /// @dev index internal sctruct and return information based on tradeId and counter-part address either creator or executer
+    /// getTrade - this method returns data about the trade based on tradeId and user wallet
+    /// @param tradeId to obtain information
+    /// @param userWallet to check trades for that wallet address
+    /// @dev indexes internal sctructure and information based on tradeId and wallet address
     /// @return arrays of tokenAddress, tokenIds, tokenAmount, tokenType
     function getTrade(uint256 tradeId, address userWallet) external view returns (address[] memory, uint256[] memory , uint256[] memory , uint8[] memory )
     {
@@ -261,9 +262,9 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
     }
 
 
-    /// Return all opens trades for a given address
-    /// @param u user address to check open trades
-    /// @dev return all trades for a address stored in the _openTrades on that index 
+    /// tradePerUser - Returns all open trades for a given wallet address
+    /// @param to check open trades based on wallet address
+    /// @dev returns all trades open for an address stored in the _openTrades index 
     /// @return all trades open for a user
     function tradePerUser(address u) external view returns(uint256[] memory ){
         return (_openTrades[u]);
@@ -278,13 +279,13 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
     /// internal function
 
 
-    /// verify ERC721  address between two address
-    /// @param from origin address
-    /// @param tokenAddress address of the ERC20 contract
+    /// verifyERC721 - verifies ERC721 token ownership from wallet address
+    /// @param for wallet address
+    /// @param tokenAddress address of the ERC721 contract
     /// @param tokenId of that token
-    /// @param verifyAproval of that token
-    /// @dev verifyERC721 from address to another. First call method verifyERC721 just to check if from address hold the amount required. And if he'd allowd web4bazaar contract to spender that amount
-    /// @return true if swap ocurr with sucess
+    /// @param verifyAproval to verify Bazaar smart contract's approval to move this token
+    /// @dev verifyERC721 to check the ownership of ERC721 tokens specified in a trade created for that wallet address
+    /// @return true if verification is sucessful
     function verifyERC721 (address from, address tokenAddress, uint256 tokenId, bool verifyAproval) internal view returns (bool){
         require(from == ERC721(tokenAddress).ownerOf(tokenId), 'WEB3BAZAAR_ERROR: ERR_NOT_OWN_ID_ERC721');
         if(verifyAproval){
@@ -293,13 +294,13 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
         return true;
     }
 
-    /// verify ERC20 address between two address
-    /// @param from origin address
+    /// verifyERC20 - verifies ERC20 token ownership and amount available from wallet address
+    /// @param for wallet address
     /// @param tokenAddress address of the ERC20 contract
     /// @param amount of that token
-    /// @param verifyAproval of that token
-    /// @dev verifyERC20 from address to another. First call method verifyERC721 just to check if from address hold the amount required. And if he'd allowd web4bazaar contract to spender that amount
-    /// @return true if swap ocurr with sucess
+    /// @param verifyAproval to verify Bazaar smart contract's approval to move this token
+    /// @dev verifyERC20 to check the ownership of ERC20 tokens and amounts specified in a trade created for that wallet address
+    /// @return true if the amount owned by the user is equal or superior to the value specified in the trade
     function verifyERC20 (address from, address tokenAddress, uint256 amount, bool verifyAproval ) internal view returns (bool){
         require(amount <= IERC20(tokenAddress).balanceOf(from), 'WEB3BAZAAR_ERROR: ERR_NOT_ENOUGH_FUNDS_ERC20');
         if(verifyAproval){
@@ -308,14 +309,13 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
         return true;
     }
 
-    /// VerifyERC1155 address between two address
-    /// @param from origin address
-    /// @param tokenAddress address of the ERC20 contract
+    /// VerifyERC1155 - Verifies ERC1155 token ownership and amount available from wallet address
+    /// @param for wallet address
+    /// @param tokenAddress address of the ERC1155 contract
     /// @param amount of that token
     /// @param tokenId of that token
-    /// @param verifyAproval of that token
-    /// @dev Swap token ERC721 from address to another. First call method verifyERC721 just to check if from address hold the amount required. And if he'd allowd web4bazaar contract to spender that amount
-    /// @return true if swap ocurr with sucess
+    /// @param verifyAproval to check the ownership of ERC1155 tokens and amounts specified in a trade created for that wallet address
+    /// @return true if the amount owned by the user is equal or superior to the value specified in the trade
     function verifyERC1155 (address from, address tokenAddress, uint256 amount, uint256 tokenId, bool verifyAproval) internal view returns (bool){
         require(tokenId > 0, 'WEB3BAZAAR_ERROR: STAKE_ERC1155_ID_SHOULD_GREATER_THEN_0');
         require(amount > 0 && amount <= ERC1155(tokenAddress).balanceOf(from, tokenId), 'WEB3BAZAAR_ERROR: ERR_NOT_ENOUGH_FUNDS_ERC1155');
@@ -325,27 +325,27 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
         return true;
     }
 
-    /// Swap ERC721 address between two address
-    /// @param from origin address
-    /// @param to  destination address
-    /// @param tokenAddress address of the ERC20 contract
+    /// SwapERC721-  moves token ERC721 from one address to another
+    /// @param for owner address
+    /// @param for destination address
+    /// @param tokenAddress of the ERC20 contract
     /// @param tokenId of that token
-    /// @dev Swap token ERC721 from address to another. First call method verifyERC721 just to check if from address hold the amount required. And if he'd allowd web4bazaar contract to spender that amount
-    /// @return true if swap ocurr with sucess
+    /// @dev Swaps token ERC721 from one address to another. First calls method verifyERC721 to check token ownership then swaps it from the owner to the destination address
+    /// @return true if swap is successful
     function swapERC721 (address from, address to, address tokenAddress, uint256 tokenId) internal returns (bool){
         verifyERC721(from, tokenAddress, tokenId, true);
         ERC721(tokenAddress).safeTransferFrom(from, to , tokenId, '');
         return true;
     }
 
-    /// Swap ERC1155 address between two address
-    /// @param from origin address
-    /// @param to  destination address
-    /// @param tokenAddress address of the ERC20 contract
+    /// SwapERC1155 - moves tokens ERC1155 from one address to another
+    /// @param from owner address
+    /// @param for destination address
+    /// @param tokenAddress of the ERC1155 contract
     /// @param tokenId of that token
     /// @param amount of that token
-    /// @dev Swap token ERC1155 from address to another. First call method verifyERC1155 just to check if from address hold the amount required. And if he'd allowd web4bazaar contract to spender that amount
-    /// @return true if swap ocurr with sucess
+    /// @dev Swaps token(s) ERC721 from one address to another. First calls method verifyERC1155 to check token ownership and amount held then swaps them from the owner to the destination address
+    /// @return true if swap is successful
     function swapERC1155 (address from, address to, address tokenAddress, uint256 tokenId, uint256 amount) internal returns (bool)
     {
         verifyERC1155(from, tokenAddress, amount, tokenId, true );
@@ -353,13 +353,13 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
         return true;
     }
 
-    /// Swap ERC20 address between two address
-    /// @param from origin address
-    /// @param to  destination address
+    /// Swap ERC20 - moves tokens ERC20 from one address to another
+    /// @param for owner ess
+    /// @param for destination address
     /// @param tokenAddress address of the ERC20 contract
     /// @param amount of that token
-    /// @dev Swap token ERC20 from address to another. First call method verifyERC20 just to check if from address hold the amount required. And if he'd allowd web4bazaar contract to spender that amount
-    /// @return true if swap ocurr with sucess
+    /// @ddev Swaps token(s) ERC20 from one address to another. First calls method verifyERC20 to check token ownership and amount held then swaps them from the owner to the destination address
+    /// @return true if swap is successful
     function swapERC20 (address from, address to, address tokenAddress, uint256 amount) internal returns (bool){
         verifyERC20(from, tokenAddress, amount, true );
         SafeERC20.safeTransferFrom( IERC20(tokenAddress) , from, to, amount );
@@ -369,10 +369,10 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
     /// private functions
 
 
-    /// remove an open trade from _openTrades array
-    /// @param u user address to check open trades
-    /// @param tradeId  tradeId from the trade you want to remove
-    /// @dev retrieves the value of the state variable `storedData`
+    /// removeTradeForUser - remove an open trade from _openTrades array
+    /// @param  user address to check open trades
+    /// @param tradeId  from the trade you want to remove
+    /// @dev retrieves the value of the state of the variable `storedData`
     /// @return all trades open for a user
     function removeTradeForUser(address u, uint256 tradeId ) private returns(bool)
     {
@@ -392,11 +392,11 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
         return false;
     }
 
-    /// verify integraty of data to be swapped
-    /// @param tokenAddress user address to check open trades
-    /// @param tokenId  tradeId from the trade you want to remove
-    /// @param amount  tradeId from the trade you want to remove
-    /// @param tokenType  tradeId from the trade you want to remove
+    /// vverifyTradeIntegrity- verifies integrety of data from tokens be swapped
+    /// @param tokenAddress  to check open trades for wallet address
+    /// @param tokenId from the trade you want to remove
+    /// @param amount tradeId from the trade you want to remove
+    /// @param tokenType tradeId from the trade you want to remove
     /// @dev retrieves the value of the state variable `storedData`
     /// @return all trades open for a user
     function verifyTradeIntegrity(address tokenAddress, uint256 tokenId,  uint256 amount, uint8 tokenType) private pure returns(bool)
