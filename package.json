@@ -14,8 +14,10 @@
   "author": "drbrown",
   "license": "ISC",
   "devDependencies": {
+    "@codechecks/client": "^0.1.12",
+    "eth-gas-reporter": "^0.2.24",
     "@openzeppelin/contracts": "^4.7.1",
     "coveralls": "^3.1.1",
-    "solidity-coverage": "^0.7.21"
+    "solidity-coverage": "^0.7.20"
   }
 }

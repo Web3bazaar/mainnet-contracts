@@ -81,10 +81,10 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
 
     // External functions
 
-    /// getTrade
-    /// @param tradeId user address to check open trades
-    /// @dev return all trades for a address stored in the _openTrades on that index 
-    /// @return all trades open for a user
+    /// cancelTrade before the trade was completed both of the users can cancel the trade. 
+    /// @param tradeId tradeId for cancel
+    /// @dev change the status of the trade to cancelled. That way executer cannot finish the trade
+    /// @return all true  if trade was cancelled
     function cancelTrade(uint256 tradeId) external  returns (bool)
     {
         Trade storage store = _transactions[tradeId];
@@ -95,10 +95,10 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
         return true;
     }
   
-    /// getTrade
-    /// @param tradeId user address to check open trades
-    /// @dev return all trades for a address stored in the _openTrades on that index 
-    /// @return all trades open for a user
+    /// execute trade by the executer the asset will be swaps between the two users
+    /// @param tradeId tradeId for cancel
+    /// @dev the assets from both users will verified again to check if both users still owen that assets then the swaps will ocurr. 
+    /// @return id of the trade
     function executeTrade(uint256 tradeId ) external returns(uint256)
     {
         Trade storage store = _transactions[tradeId];
@@ -143,17 +143,17 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
     }
 
    
-    /// startTrade
-    /// @param creatorTokenAddress user address to check open trades
-    /// @param creatorTokenId user address to check open trades
-    /// @param creatorAmount user address to check open trades
-    /// @param creatorTokenType user address to check open trades
-    /// @param executerAddress user address to check open trades
-    /// @param executorTokenAddress user address to check open trades
-    /// @param executorTokenId user address to check open trades
-    /// @param executorAmount user address to check open trades
-    /// @param executorTokenType user address to check open trades
-    /// @dev return all trades for a address stored in the _openTrades on that index 
+    /// initiate the trade.
+    /// @param creatorTokenAddress array containing the address of the contract for each asset for creator
+    /// @param creatorTokenId array containing tokenId for each asset (only applicable for erc721 and erc1155) for creator
+    /// @param creatorAmount array containing the amount of each token (only applicable for erc1155 and erc20) for creator
+    /// @param creatorTokenType array containing the type of token (erc20, erc721 and erc1155) for creator
+    /// @param executerAddress wallet of conter-party user
+    /// @param executorTokenAddress array containing the address of the contract for each asset for executer
+    /// @param executorTokenId array containing tokenId for each asset (only applicable for erc721 and erc1155) for executer
+    /// @param executorAmount array containing the amount of each token (only applicable for erc1155 and erc20) for executer
+    /// @param executorTokenType array containing the type of token (erc20, erc721 and erc1155) for executer
+    /// @dev this method check if both users own the assets that creator wants to swap and then initiate the trade with executer
     /// @return all trades open for a user
     function startTrade( address[] memory creatorTokenAddress, uint256[] memory creatorTokenId, uint256[] memory creatorAmount, uint8[]  memory creatorTokenType,
                         address  executerAddress , address[] memory executorTokenAddress, uint256[] memory executorTokenId, uint256[] memory executorAmount, uint8[] memory executorTokenType  ) external returns(uint256)
@@ -225,21 +225,21 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
     // External functions  that are view
 
 
-    /// getTrade
-    /// @param tradeId user address to check open trades
-    /// @dev return all trades for a address stored in the _openTrades on that index 
-    /// @return all trades open for a user
+    /// this method return some information about the trade based on tradeId
+    /// @param tradeId for trade caller wants obtain information
+    /// @dev index and return some information about the trade
+    /// @return creator address, executer address and trade status
     function getTrade(uint256 tradeId) external view returns (address, address,uint8)
     {
         Trade storage store = _transactions[tradeId];
         return (store.creator, store.executor, uint8(store.tradeStatus));
     }
 
-    /// getTrade
-    /// @param tradeId user address to check open trades
+    /// this method return some information about the trade based on tradeId and userWallet
+    /// @param tradeId for trade caller wants obtain information
     /// @param userWallet user address to check open trades
-    /// @dev return all trades for a address stored in the _openTrades on that index 
-    /// @return all trades open for a user
+    /// @dev index internal sctruct and return information based on tradeId and counter-part address either creator or executer
+    /// @return arrays of tokenAddress, tokenIds, tokenAmount, tokenType
     function getTrade(uint256 tradeId, address userWallet) external view returns (address[] memory, uint256[] memory , uint256[] memory , uint8[] memory )
     {
         Trade storage store = _transactions[tradeId];
@@ -283,7 +283,7 @@ contract Web3BazaarEscrow is Context, ERC1155Holder, ERC721Holder, MultiAccessCo
     /// @param tokenAddress address of the ERC20 contract
     /// @param tokenId of that token
     /// @param verifyAproval of that token
-    /// @dev verifyERC20 from address to another. First call method verifyERC721 just to check if from address hold the amount required. And if he'd allowd web4bazaar contract to spender that amount
+    /// @dev verifyERC721 from address to another. First call method verifyERC721 just to check if from address hold the amount required. And if he'd allowd web4bazaar contract to spender that amount
     /// @return true if swap ocurr with sucess
     function verifyERC721 (address from, address tokenAddress, uint256 tokenId, bool verifyAproval) internal view returns (bool){
         require(from == ERC721(tokenAddress).ownerOf(tokenId), 'WEB3BAZAAR_ERROR: ERR_NOT_OWN_ID_ERC721');

@@ -4,8 +4,8 @@
 https://docs.soliditylang.org/en/v0.8.15/style-guide.html
 
 
-## travis
-https://github.com/gongf05/travis-solidity-testing-demo
+## CI github
+https://limcheekin.medium.com/solidity-and-truffle-continuous-integration-setup-with-github-actions-221149eabcca
 
 
 ## Contract audit fixs
