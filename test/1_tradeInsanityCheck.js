@@ -2,11 +2,10 @@ const Web3BazaarBatch = artifacts.require("Web3BazaarEscrow");
 const Bazcoin = artifacts.require("Bazcoin");
 const TestCollection = artifacts.require("TestCollection");
 const web3 = require("web3");
-const truffleAssert = require("truffle-assertions");
 
 // https://www.youtube.com/watch?v=PeiTfWN7Ik0
 
-contract("Web3BazaarBatch Contract ", async (accounts) => {
+contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
   const WALLET_ADMIN = accounts[0];
   const WALLET_ONE = accounts[1];
   const WALLET_TWO = accounts[2];
@@ -167,7 +166,7 @@ contract("Web3BazaarBatch Contract ", async (accounts) => {
     assert.fail("Expected throw not received");
   });
 
-  it("Try to complete a trade which not belon to wallet", async () => {
+  it("Try to complete a trade which not belong to wallet", async () => {
     const tradeId = 1;
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
@@ -184,5 +183,113 @@ contract("Web3BazaarBatch Contract ", async (accounts) => {
       return;
     }
     assert.fail("Expected throw not received");
+  });
+
+  it("Should be error to cancel trade cause its not creator or executer", async () => {
+    const tradeId = 1;
+    const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
+
+    try {
+      await BazaarEscrowInstance.cancelTrade(tradeId, {
+        from: accounts[3],
+      });
+    } catch (error) {
+      const isReverting =
+        error.message.search(
+          "WEB3BAZAAR_ERROR: EXECUTER ISNT CREATOR OR EXECUTER"
+        ) >= 0;
+      assert.equal(isReverting, true, "Should be able to excute trade");
+      return;
+    }
+    assert.fail("Expected throw not received");
+  });
+
+  it("Should getted all info about trade", async () => {
+    const tradeId = 1;
+    const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
+    let bazCoinAddress = (await Bazcoin.deployed()).address;
+    let erc721Address = (await TestCollection.deployed()).address;
+
+    try {
+      let tradeActors = await BazaarEscrowInstance.getTrade(tradeId);
+      let creatoraddress = tradeActors[0];
+      let executerAddress = tradeActors[1];
+      //console.log("creatoraddress: ", creatoraddress);
+      //console.log("executerAddress: ", executerAddress);
+
+      assert.equal(creatoraddress, WALLET_ONE, "Should be wallet of creator");
+      assert.equal(
+        executerAddress,
+        WALLET_TWO,
+        "Should be able wallet of executer"
+      );
+
+      let tradeCreatorInfo = await BazaarEscrowInstance.getTrade(
+        tradeId,
+        creatoraddress
+      );
+      let creatorTokenAddress = tradeCreatorInfo[0];
+      //console.log("Creator token address : ", creatorTokenAddress);
+
+      assert.equal(
+        bazCoinAddress,
+        creatorTokenAddress,
+        "creatorTokenAddress should the bazcoin contract address"
+      );
+
+      let tradeExecuterInfo = await BazaarEscrowInstance.getTrade(
+        tradeId,
+        executerAddress
+      );
+      let executerTokenAddress = tradeExecuterInfo[0];
+      //console.log("executerTokenAddress : ", executerTokenAddress);
+
+      assert.equal(
+        erc721Address,
+        executerTokenAddress,
+        "executerTokenAddress should the ERC721 collection contract address"
+      );
+    } catch (error) {
+      return;
+    }
+  });
+
+  it("Should cancel the trade", async () => {
+    const tradeId = 1;
+    const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
+
+    try {
+      await BazaarEscrowInstance.cancelTrade(tradeId, {
+        from: WALLET_TWO,
+      });
+
+      const creatorOpenTrade = await BazaarEscrowInstance.tradePerUser.call(
+        WALLET_ONE
+      );
+      const executerOpenTrade = await BazaarEscrowInstance.tradePerUser.call(
+        WALLET_TWO
+      );
+
+      assert.equal(
+        creatorOpenTrade.length,
+        executerOpenTrade.length,
+        "Creator and Executer opentrades should be the same"
+      );
+
+      assert.equal(
+        creatorOpenTrade.length,
+        0,
+        "Creator open trade MUST be zero"
+      );
+    } catch (error) {}
+  });
+  it("Trade status SHOULD be cancelled", async () => {
+    const tradeId = 1;
+    const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
+    const tradeInfo = await BazaarEscrowInstance.getTrade(1);
+    //console.log("Trade Info ", tradeInfo);
+    //console.log("Trade Info 2:  ", tradeInfo[2].toNumber());
+
+    assert.equal(tradeInfo[2].toNumber(), 3, "Status SHOULD be cancelled");
   });
 });
