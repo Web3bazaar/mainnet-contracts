@@ -4,31 +4,7 @@ pragma solidity ^0.8.14;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
-contract SimpleAccessControl {
-    address internal _owner;
-
-    modifier isOwner() {
-        require(msg.sender == _owner, "ERR_NOT_OWNER");
-        _;
-    }
-
-    /*
-    constructor(address payable ownerAdress) {
-        _owner = ownerAdress; 
-    }
-    */
-    constructor() {
-        _owner = msg.sender;
-    }
-
-    function transferOwnership(address payable newOwner) public isOwner {
-        require(newOwner != address(0), "ERR_ZERO_ADDR");
-        require(newOwner != _owner, "ERR_IS_OWNER");
-        _owner = newOwner;
-    }
-}
-
-contract BazaarERC1155Collection is ERC1155, SimpleAccessControl {
+contract BazaarERC1155Collection is ERC1155 {
     uint256 private _id = 1;
     string public name;
     string private _contractURI;
@@ -53,30 +29,30 @@ contract BazaarERC1155Collection is ERC1155, SimpleAccessControl {
         return true;
     }
 
-    function setURI(string memory newuri) public isOwner returns (bool) {
-        _setURI(newuri);
-        return true;
-    }
+    // function setURI(string memory newuri) public isOwner returns (bool) {
+    //     _setURI(newuri);
+    //     return true;
+    // }
 
-    function setContractURI(string memory newuri)
-        public
-        isOwner
-        returns (bool)
-    {
-        _contractURI = newuri;
-        return true;
-    }
+    // function setContractURI(string memory newuri)
+    //     public
+    //     isOwner
+    //     returns (bool)
+    // {
+    //     _contractURI = newuri;
+    //     return true;
+    // }
 
-    function setCollectionName(string memory _name)
-        public
-        isOwner
-        returns (bool)
-    {
-        name = _name;
-        return true;
-    }
+    // function setCollectionName(string memory _name)
+    //     public
+    //     isOwner
+    //     returns (bool)
+    // {
+    //     name = _name;
+    //     return true;
+    // }
 
-    function contractURI() public view returns (string memory) {
-        return _contractURI;
-    }
+    // function contractURI() public view returns (string memory) {
+    //     return _contractURI;
+    // }
 }

@@ -115,8 +115,13 @@ contract Web3BazaarEscrow is
             store.executor == msg.sender || store.creator == msg.sender,
             "WEB3BAZAAR_ERROR: EXECUTER ISNT CREATOR OR EXECUTER"
         );
+
+        removeTradeForUser(_transactions[tradeId].executor, tradeId);
+        removeTradeForUser(_transactions[tradeId].creator, tradeId);
+
         _transactions[tradeId].tradeStatus = TradeStatus.TRADE_CANCELLED;
         openTradeCount = openTradeCount - 1;
+
         return true;
     }
 
@@ -243,10 +248,6 @@ contract Web3BazaarEscrow is
             "WEB3BAZAAR_ERROR: EXECUTER_ADDRESS_NOT_VALID"
         );
         require(
-            creatorAddress != address(0),
-            "WEB3BAZAAR_ERROR: CREATOR_ADDRESS_NOT_VALID"
-        );
-        require(
             executerAddress != creatorAddress,
             "WEB3BAZAAR_ERROR: CREATOR_AND_EXECUTER_ARE_EQUAL"
         );
@@ -277,10 +278,6 @@ contract Web3BazaarEscrow is
         _transactions[_tradeId].creator = creatorAddress;
         _transactions[_tradeId].executor = executerAddress;
         for (uint256 i = 0; i < creatorTokenAddress.length; i++) {
-            require(
-                creatorTokenAddress[i] != address(0),
-                "WEB3BAZAAR_ERROR: CREATOR_TOKEN_ADDRESS_IS_ZERO"
-            );
             verifyTradeIntegrity(
                 creatorTokenAddress[i],
                 creatorTokenId[i],
@@ -336,10 +333,6 @@ contract Web3BazaarEscrow is
                 .traderStatus = UserStatus.OPEN;
         }
         for (uint256 i = 0; i < executorTokenAddress.length; i++) {
-            require(
-                executorTokenAddress[i] != address(0),
-                "WEB3BAZAAR_ERROR: EXECUTER_TOKEN_ADDRESS_IS_ZERO"
-            );
             verifyTradeIntegrity(
                 executorTokenAddress[i],
                 executorTokenId[i],
@@ -426,7 +419,7 @@ contract Web3BazaarEscrow is
     /// @param userWallet to check trades for that wallet address
     /// @dev indexes internal sctructure and information based on tradeId and wallet address
     /// @return arrays of tokenAddress, tokenIds, tokenAmount, tokenType
-    function getTrade(uint256 tradeId, address userWallet)
+    function getTradeWithAddress(uint256 tradeId, address userWallet)
         external
         view
         returns (
@@ -653,7 +646,6 @@ contract Web3BazaarEscrow is
                 return true;
             }
         }
-        return false;
     }
 
     /// vverifyTradeIntegrity- verifies integrety of data from tokens be swapped
@@ -671,7 +663,7 @@ contract Web3BazaarEscrow is
     ) private pure returns (bool) {
         require(
             tokenAddress != address(0),
-            "WEB3BAZAAR_ERROR: CREATOR_CONTRACT_NOT_VALID"
+            "WEB3BAZAAR_ERROR: CONTRACT_TOKEN_ADDRESS_IS_ZERO"
         );
         require(
             tokenType > uint8(TradeType.NON) &&
