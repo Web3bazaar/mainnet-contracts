@@ -13,7 +13,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
   it("Mint ERC20 tokens for Wallet One", async () => {
     const BazcoinInstance = await Bazcoin.deployed();
     // console.log('bazcoin conctract address: ', BazcoinInstance.address );
-    const assertBalance = 60e18;
+    const assertBalance = 50e18;
     await BazcoinInstance.mint({ from: WALLET_ONE });
     let twoBalance = await BazcoinInstance.balanceOf(WALLET_ONE);
     let toNumber = web3.utils.toBN(twoBalance);
@@ -306,51 +306,52 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
       console.log("error executing second trade ", ex);
     }
   });
-  it("Should execute third trade with success", async () => {
-    let tradeId = 3;
-    const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
-    try {
-      let tradeActors = await BazaarEscrowInstance.getTrade(3);
-      let creatoraddress = tradeActors[0];
-      let executerAddress = tradeActors[1];
-      let trade1 = await BazaarEscrowInstance.getTrade(1);
-      let trade2 = await BazaarEscrowInstance.getTrade(2);
-      let trade3 = await BazaarEscrowInstance.getTrade(3);
+  // it("Should execute third trade with success", async () => {
+  //   let tradeId = 3;
+  //   const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
-      console.log("trade 1 status ", trade1[2].toNumber());
-      console.log("trade 2 status ", trade2[2].toNumber());
-      console.log("trade 3 status ", trade3[2].toNumber());
-      let trades = await BazaarEscrowInstance.tradePerUser(WALLET_TWO);
-      for (var i in trades) {
-        console.log("trade id ", trades[i].toNumber());
-      }
+  //   try {
+  //     let tradeActors = await BazaarEscrowInstance.getTrade(3);
+  //     let creatoraddress = tradeActors[0];
+  //     let executerAddress = tradeActors[1];
+  //     let trade1 = await BazaarEscrowInstance.getTrade(1);
+  //     let trade2 = await BazaarEscrowInstance.getTrade(2);
+  //     let trade3 = await BazaarEscrowInstance.getTrade(3);
 
-      // for await (idx of tradesTwo) {
-      //   console.log("open for user ", tradesTwo[idx].toNumber());
-      // }
+  //     console.log("trade 1 status ", trade1[2].toNumber());
+  //     console.log("trade 2 status ", trade2[2].toNumber());
+  //     console.log("trade 3 status ", trade3[2].toNumber());
+  //     let trades = await BazaarEscrowInstance.tradePerUser(WALLET_TWO);
+  //     for (var i in trades) {
+  //       console.log("trade id ", trades[i].toNumber());
+  //     }
 
-      assert.equal(
-        WALLET_TWO,
-        executerAddress,
-        "Wallet two should be the executer"
-      );
+  //     // for await (idx of tradesTwo) {
+  //     //   console.log("open for user ", tradesTwo[idx].toNumber());
+  //     // }
 
-      await BazaarEscrowInstance.executeTrade(3, {
-        from: WALLET_TWO,
-      });
+  //     assert.equal(
+  //       WALLET_TWO,
+  //       executerAddress,
+  //       "Wallet two should be the executer"
+  //     );
 
-      const openTrades = await BazaarEscrowInstance.tradePerUser(WALLET_TWO);
-      //console.log("openTrades after third execute : ", openTrades);
-      assert.equal(
-        openTrades.length,
-        1,
-        "Open trades for wallet one should be 1"
-      );
-    } catch (error) {
-      console.log("Error third ", error);
-    }
-  });
+  //     await BazaarEscrowInstance.executeTrade(3, {
+  //       from: WALLET_TWO,
+  //     });
+
+  //     const openTrades = await BazaarEscrowInstance.tradePerUser(WALLET_TWO);
+  //     //console.log("openTrades after third execute : ", openTrades);
+  //     assert.equal(
+  //       openTrades.length,
+  //       1,
+  //       "Open trades for wallet one should be 1"
+  //     );
+  //   } catch (error) {
+  //     console.log("Error third ", error);
+  //   }
+  // });
 
   it("Should getted all info about trade", async () => {
     const tradeId = 1;
