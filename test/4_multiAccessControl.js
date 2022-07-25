@@ -6,9 +6,9 @@ const BazaarERC1155Collection = artifacts.require("BazaarERC1155Collection");
 const web3 = require("web3");
 
 contract(
-  "Web3BazaarBatch - MultiAccessControl admin functions",
+  "Web3BazaarEscrow - MultiAccessControl admin functions",
   async (accounts) => {
-    it("Should throw an error NOT_ADMIN ", async () => {
+    it("Should return an error NOT_ADMIN ", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       try {
@@ -20,13 +20,13 @@ contract(
         assert.equal(
           isReverting,
           true,
-          "Should'nt be able to add yourself as admin"
+          "Shouldn't be able to add yourself as admin"
         );
         return;
       }
       assert.fail("Expected throw not received");
     });
-    it("remove an admin without being admin", async () => {
+    it("removes an admin without being admin", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       try {
@@ -38,7 +38,7 @@ contract(
         assert.equal(
           isReverting,
           true,
-          "Should'nt be able to add yourself as admin"
+          "Shoulnd't be able to add yourself as admin"
         );
         return;
       }
