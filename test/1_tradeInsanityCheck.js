@@ -5,12 +5,12 @@ const web3 = require("web3");
 
 // https://www.youtube.com/watch?v=PeiTfWN7Ik0
 
-contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
+contract("Web3BazaarEscrow Contract - Check requirements ", async (accounts) => {
   const WALLET_ADMIN = accounts[0];
   const WALLET_ONE = accounts[1];
   const WALLET_TWO = accounts[2];
 
-  it("Mint ERC20 tokens for Wallet One", async () => {
+  it("Mints ERC20 tokens for Wallet One", async () => {
     const BazcoinInstance = await Bazcoin.deployed();
     // console.log('bazcoin conctract address: ', BazcoinInstance.address );
     const assertBalance = 50e18;
@@ -21,7 +21,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     assert.equal(toNumber, assertBalance, "Balance should be " + assertBalance);
   });
 
-  it("Mint ERC721 Itens for Wallet Two", async () => {
+  it("Mints ERC721 Itens for Wallet Two", async () => {
     const TestCollectionInstance = await TestCollection.deployed();
     //console.log('bazcoin conctract address: ', TestCollectionInstance.address );
 
@@ -49,7 +49,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     );
   });
 
-  it("Should set new max asset per trade", async () => {
+  it("Should set new max amount of assets per trade", async () => {
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
     let newMaxAssetPerTrade = 25;
     await BazaarEscrowInstance.setAssetPerTrade(newMaxAssetPerTrade);
@@ -60,7 +60,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     //console.log('openTrades : ', openTrades );
     assert.equal(newMaxAssetPerTrade, numMaxPerTrades);
   });
-  it("Should throw error setting new max assets per trades", async () => {
+  it("Should return error setting new max amount of assets per trades", async () => {
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
     let newMaxAssetPerTrade = 1001;
 
@@ -81,7 +81,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     assert.fail("Expected throw not received");
   });
   // ###
-  it("Should throw error starting trade with more itens that what allowed", async () => {
+  it("Should return error starting trade with more items than allowed", async () => {
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
     let bazCoinAddress = (await Bazcoin.deployed()).address;
     let erc721Address = (await TestCollection.deployed()).address;
@@ -140,7 +140,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     );
   });
 
-  it("Wallet One allow web3Bazaar contract to send funds", async () => {
+  it("Wallet One allows web3Bazaar contract to send funds", async () => {
     const BazcoinInstance = await Bazcoin.deployed();
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
     const allowanceLimit = 50e18;
@@ -167,7 +167,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     );
   });
 
-  it("Initializate trade between Wallet 1 and Wallet 2 with sucess", async () => {
+  it("Strats trade between Wallet one and Wallet two successfully", async () => {
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
     let bazCoinAddress = (await Bazcoin.deployed()).address;
     let erc721Address = (await TestCollection.deployed()).address;
@@ -209,7 +209,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     );
   });
 
-  it("Initializate second trade between Wallet 1 and Wallet 2 with sucess", async () => {
+  it("Starts second trade between Wallet one and Wallet two succesfully", async () => {
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
     let bazCoinAddress = (await Bazcoin.deployed()).address;
     let erc721Address = (await TestCollection.deployed()).address;
@@ -244,7 +244,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
       "Open trades for wallet one should be 1"
     );
   });
-  it("Initializate third trade between Wallet 1 and Wallet 2 with sucess", async () => {
+  it("Starts third trade between Wallet 1 and Wallet 2 sucessfully", async () => {
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
     let bazCoinAddress = (await Bazcoin.deployed()).address;
     let erc721Address = (await TestCollection.deployed()).address;
@@ -280,7 +280,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     );
   });
 
-  it("Execute trade should fail because wallet two wont allow web3bazaar contract to spend ERC721 tokens", async () => {
+  it("Execute trade should fail because wallet two doesn't allow web3bazaar contract to spend ERC721 tokens", async () => {
     const tradeId = 1;
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
@@ -297,7 +297,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     assert.fail("Expected throw not received");
   });
 
-  it("Try to complete a trade which not belong to wallet", async () => {
+  it("Tries to complete a trade involving assets not owned by the wallet address provided", async () => {
     const tradeId = 1;
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
@@ -316,7 +316,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     assert.fail("Expected throw not received");
   });
 
-  it("Should be error to cancel trade cause its not creator or executer", async () => {
+  it("Should return an error cancelling the trade because the caller of this function is not the cretor nor the executor", async () => {
     const tradeId = 1;
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
@@ -327,7 +327,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     } catch (error) {
       const isReverting =
         error.message.search(
-          "WEB3BAZAAR_ERROR: EXECUTER ISNT CREATOR OR EXECUTER"
+          "WEB3BAZAAR_ERROR: EXECUTER ISNT CREATOR OR EXECUTOR"
         ) >= 0;
       assert.equal(isReverting, true, "Should be able to excute trade");
       return;
@@ -335,7 +335,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     assert.fail("Expected throw not received");
   });
 
-  it("Allow BazaarContract to spend NFT", async () => {
+  it("Allows WEB3Bazaar Contract to spend NFT", async () => {
     const TestCollectionInstance = await TestCollection.deployed();
 
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
@@ -361,7 +361,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     );
   });
 
-  it("Should execute second trade with success", async () => {
+  it("Should execute second trade successfully", async () => {
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
     try {
@@ -432,7 +432,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
   //   }
   // });
 
-  it("Should getted all info about trade", async () => {
+  it("Should return all info about trade", async () => {
     const tradeId = 1;
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
     let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -449,7 +449,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
       assert.equal(
         executerAddress,
         WALLET_TWO,
-        "Should be able wallet of executer"
+        "Should be able to get wallet address of executer"
       );
 
       let tradeCreatorInfo = await BazaarEscrowInstance.getTradeWithAddress(
