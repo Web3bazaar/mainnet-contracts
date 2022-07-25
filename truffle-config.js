@@ -1,3 +1,9 @@
+const HDWalletProvider = require("@truffle/hdwallet-provider");
+require("dotenv").config();
+const fs = require("fs");
+const privKey = fs.readFileSync(".privkey").toString().trim();
+// https://ethereum.stackexchange.com/questions/102302/unable-to-connect-to-polygon-mumbai-test-network-using-truffle
+
 module.exports = {
   // Uncommenting the defaults below
   // provides for an easier quick-start with Ganache.
@@ -6,18 +12,22 @@ module.exports = {
   // on how to specify configuration options!
   //
   networks: {
-   development: {
-     host: "127.0.0.1",
-     port: 8545,
-     network_id: "*"
-   },
-   matic: {
-    provider: () => new HDWalletProvider(mnemonic, `https://rpc-mumbai.maticvigil.com/v1/ID`),
-    network_id: 80001,
-    confirmations: 2,
-    timeoutBlocks: 200,
-    skipDryRun: true
-  },
+    development: {
+      host: "127.0.0.1",
+      port: 8545,
+      network_id: "*",
+    },
+    mumbai: {
+      provider: () =>
+        new HDWalletProvider(
+          privKey,
+          "https://rpc-mumbai.maticvigil.com/v1/b22946af83eb7e2498773672df08b8216e60aa07"
+        ),
+      network_id: 80001,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+    },
   },
   //
   // Truffle DB is currently disabled by default; to enable it, change enabled:
@@ -31,27 +41,32 @@ module.exports = {
   // $ truffle migrate --reset --compile-all
   //
   // db: {
-    // enabled: false,
-    // host: "127.0.0.1",
-    // adapter: {
-    //   name: "sqlite",
-    //   settings: {
-    //     directory: ".db"
-    //   }
-    // }
+  // enabled: false,
+  // host: "127.0.0.1",
+  // adapter: {
+  //   name: "sqlite",
+  //   settings: {
+  //     directory: ".db"
+  //   }
+  // }
   // }
   compilers: {
     solc: {
       version: "0.8.14", // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-      // settings: {          // See the solidity docs for advice about optimization and evmVersion
-      //  optimizer: {
-      //    enabled: false,
-      //    runs: 200
-      //  },
-      //  evmVersion: "byzantium"
-      // }
+      settings: {
+        // See the solidity docs for advice about optimization and evmVersion
+        // optimizer: {
+        //   enabled: false,
+        //   runs: 200,
+        // },
+        // evmVersion: "byzantium",
+      },
     },
   },
-  plugins: ["solidity-coverage"]
+  plugins: ["solidity-coverage", "truffle-plugin-verify"],
+  api_keys: {
+    etherscan: "",
+    polygonscan: process.env.MUMBAI_API_KEY,
+  },
 };

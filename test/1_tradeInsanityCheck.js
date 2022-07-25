@@ -86,7 +86,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     let bazCoinAddress = (await Bazcoin.deployed()).address;
     let erc721Address = (await TestCollection.deployed()).address;
     const numMaxPerTrades = await BazaarEscrowInstance.numAssetsPerTrade.call();
-    console.log("Max Per trades : ", numMaxPerTrades.toNumber());
+    //console.log("Max Per trades : ", numMaxPerTrades.toNumber());
 
     const maxItensForTest = 400;
     let executerAddressArray = [],
@@ -99,7 +99,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
       executerAmounts.push(1);
       executerTypes.push(3);
     }
-    console.log("Executer Address length: ", executerAddressArray.length);
+    // console.log("Executer Address length: ", executerAddressArray.length);
     try {
       const tradeId = await BazaarEscrowInstance.startTrade(
         [bazCoinAddress],
