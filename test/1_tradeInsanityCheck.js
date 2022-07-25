@@ -49,6 +49,85 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     );
   });
 
+  it("Should set new max asset per trade", async () => {
+    const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
+    let newMaxAssetPerTrade = 25;
+    await BazaarEscrowInstance.setAssetPerTrade(newMaxAssetPerTrade);
+    const numMaxPerTrades = await BazaarEscrowInstance.numAssetsPerTrade.call();
+    //console.log("Max Per trades : ", numMaxPerTrades.toNumber());
+
+    //  console.log('Bazaar Escrow Address : ', BazaarEscrowInstance.address );
+    //console.log('openTrades : ', openTrades );
+    assert.equal(newMaxAssetPerTrade, numMaxPerTrades);
+  });
+  it("Should throw error setting new max assets per trades", async () => {
+    const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
+    let newMaxAssetPerTrade = 1001;
+
+    try {
+      await BazaarEscrowInstance.setAssetPerTrade(newMaxAssetPerTrade);
+    } catch (error) {
+      const isReverting =
+        error.message.search(
+          "WEB3BAZAAR_ERROR: assetPerTrade should be greater then 1 and less then 1000"
+        ) >= 0;
+      assert.equal(
+        isReverting,
+        true,
+        "Should not be able to set new max number per trade"
+      );
+      return;
+    }
+    assert.fail("Expected throw not received");
+  });
+  // ###
+  it("Should throw error starting trade with more itens that what allowed", async () => {
+    const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
+    let bazCoinAddress = (await Bazcoin.deployed()).address;
+    let erc721Address = (await TestCollection.deployed()).address;
+    const numMaxPerTrades = await BazaarEscrowInstance.numAssetsPerTrade.call();
+    console.log("Max Per trades : ", numMaxPerTrades.toNumber());
+
+    const maxItensForTest = 400;
+    let executerAddressArray = [],
+      executerIds = [],
+      executerAmounts = [],
+      executerTypes = [];
+    for (let i = 1; i <= maxItensForTest; i++) {
+      executerAddressArray.push(erc721Address);
+      executerIds.push(i);
+      executerAmounts.push(1);
+      executerTypes.push(3);
+    }
+    console.log("Executer Address length: ", executerAddressArray.length);
+    try {
+      const tradeId = await BazaarEscrowInstance.startTrade(
+        [bazCoinAddress],
+        [1],
+        [web3.utils.toBN(40)],
+        [1],
+        //executer params
+        WALLET_TWO,
+        executerAddressArray,
+        executerIds,
+        executerAmounts,
+        executerTypes,
+        {
+          from: WALLET_ONE,
+        }
+      );
+    } catch (error) {
+      //console.log("error : ", error);
+      const isReverting =
+        error.message.search(
+          "WEB3BAZAAR_ERROR: EXECUTER_TOKENS_EXCEED_MAX_ASSET_PER_TRADE"
+        ) >= 0;
+      assert.equal(isReverting, true, "Should not be able start trade");
+      return;
+    }
+    assert.fail("Expected throw not received");
+  });
+
   it("Should return empty trade", async () => {
     const tradeId = 1;
     const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
@@ -288,7 +367,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
     try {
       let trades = await BazaarEscrowInstance.tradePerUser(WALLET_TWO);
       for (var i in trades) {
-        console.log("before - trade id ", trades[i].toNumber());
+        //console.log("before - trade id ", trades[i].toNumber());
       }
 
       await BazaarEscrowInstance.executeTrade(2, {
@@ -296,7 +375,7 @@ contract("Web3BazaarBatch Contract - Check requirements ", async (accounts) => {
       });
       let trades2 = await BazaarEscrowInstance.tradePerUser(WALLET_TWO);
       for (var i in trades2) {
-        console.log("after - trade id ", trades2[i].toNumber());
+        //console.log("after - trade id ", trades2[i].toNumber());
       }
 
       //  console.log('Bazaar Escrow Address : ', BazaarEscrowInstance.address );

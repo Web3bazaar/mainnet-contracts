@@ -53,8 +53,10 @@ contract Web3BazaarEscrow is
     mapping(uint256 => Trade) internal _transactions;
     mapping(address => uint256[]) internal _openTrades;
 
+    uint256 private constant MAX_ASSET_PER_TRADE = 1000;
     uint256 public openTradeCount;
     uint256 public totalCompletedTrade;
+    uint256 public numAssetsPerTrade;
 
     enum TradeStatus {
         NON,
@@ -97,9 +99,22 @@ contract Web3BazaarEscrow is
     constructor() MultiAccessControl() {
         openTradeCount = 0;
         totalCompletedTrade = 0;
+        numAssetsPerTrade = 100;
     }
 
     // External functions
+
+    /// Set number of asset per trade
+    /// @param newMaxAseetPerTrade the new value to store
+    /// @dev set max number of asset per trade need to be less then 1000
+    function setAssetPerTrade(uint256 newMaxAseetPerTrade) external isOwner {
+        require(
+            newMaxAseetPerTrade > 1 &&
+                newMaxAseetPerTrade < MAX_ASSET_PER_TRADE,
+            "WEB3BAZAAR_ERROR: assetPerTrade should be greater then 1 and less then 1000"
+        );
+        numAssetsPerTrade = newMaxAseetPerTrade;
+    }
 
     /// cancelTrade -  To invalidate an already created trade. Can be called by both the trade creator or executor
     /// @param tradeId to cancel
@@ -259,7 +274,6 @@ contract Web3BazaarEscrow is
             executorTokenAddress.length > 0,
             "WEB3BAZAAR_ERROR: EXECUTER_TOKEN_ADDRESS_EMPTY"
         );
-
         require(
             creatorTokenAddress.length == creatorTokenId.length &&
                 creatorTokenAddress.length == creatorAmount.length &&
@@ -271,6 +285,14 @@ contract Web3BazaarEscrow is
                 executorTokenAddress.length == executorAmount.length &&
                 executorTokenAddress.length == executorTokenType.length,
             "WEB3BAZAR_PARMS:EXECUTER_PARMS_LEN_ERROR"
+        );
+        require(
+            creatorTokenAddress.length <= numAssetsPerTrade,
+            "WEB3BAZAAR_ERROR: CREATOR_TOKENS_EXCEED_MAX_ASSET_PER_TRADE"
+        );
+        require(
+            executorTokenAddress.length <= numAssetsPerTrade,
+            "WEB3BAZAAR_ERROR: EXECUTER_TOKENS_EXCEED_MAX_ASSET_PER_TRADE"
         );
 
         _tradeId++;
@@ -628,22 +650,17 @@ contract Web3BazaarEscrow is
     /// @param u user address to check open trades
     /// @param tradeId  from the trade you want to remove
     /// @dev retrieves the value of the state of the variable `storedData`
-    /// @return all trades open for a user
-    function removeTradeForUser(address u, uint256 tradeId)
-        private
-        returns (bool)
-    {
+    function removeTradeForUser(address u, uint256 tradeId) private {
         uint256[] memory userTrades = _openTrades[u];
 
         if (_openTrades[u].length == 1) {
             _openTrades[u][0] = 0;
-            return true;
-        }
-        for (uint256 i = 0; i < userTrades.length - 1; i++) {
-            if (userTrades[i] == tradeId) {
-                _openTrades[u][i] = _openTrades[u][userTrades.length - 1];
-                _openTrades[u].pop();
-                return true;
+        } else {
+            for (uint256 i = 0; i < userTrades.length - 1; i++) {
+                if (userTrades[i] == tradeId) {
+                    _openTrades[u][i] = _openTrades[u][userTrades.length - 1];
+                    _openTrades[u].pop();
+                }
             }
         }
     }
