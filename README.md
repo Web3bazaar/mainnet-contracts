@@ -8,12 +8,12 @@ This repo contains the solidity code used in the Bazaar smart contracts hosted o
 
 |     | Command              | Description                                                           |
 | --- | -------------------- | --------------------------------------------------------------------- |
-| [1] | npm install          | install depencies                                                     |
-| [*] | truffle run coverage | run tests and coverage report                                         |
-| [*] | truffle compile      | compile contracts                                                     |
-| [*] | truffle test         | run tests for the contract (start truffle develop command-line first) |
-| [*] | deployMumbai         | deploy contract on mumbai (need to create .privKey with private key)  |
-| [*] | verifyMumbai         | verify contract and publish code on polyscan                          |
+| 1   | npm install          | Install depencies                                                     |
+|     | truffle run coverage | Run tests and coverage report                                         |
+|     | truffle compile      | Compile contracts                                                     |
+|     | truffle test         | Run tests for the contract (start truffle develop command-line first) |
+|     | deployMumbai         | Deploy contract on mumbai (need to create .privKey with private key)  |
+|     | verifyMumbai         | Verify contract and publish code on polyscan                          |
 
 ## 📝 About the Bazaar
 
