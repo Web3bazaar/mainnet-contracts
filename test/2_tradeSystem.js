@@ -291,7 +291,7 @@ contract(
         //console.log("error ", error.message);
         const isReverting =
           error.message.search(
-            "WEB3BAZAAR_ERROR: EXECUTOR_ADDRESS_NOT_VALID"
+            "WEB3BAZAAR_ERROR: EXECUTER_ADDRESS_NOT_VALID"
           ) >= 0;
         assert.equal(isReverting, true, "Should revert start trade");
         return;
@@ -340,7 +340,7 @@ contract(
         //console.log("error ", error.message);
         const isReverting =
           error.message.search(
-            "WEB3BAZAAR_ERROR: CREATOR_AND_EXECUTOR_ARE_EQUAL"
+            "WEB3BAZAAR_ERROR: CREATOR_AND_EXECUTER_ARE_EQUAL"
           ) >= 0;
         assert.equal(isReverting, true, "Should revert start trade");
         return;
