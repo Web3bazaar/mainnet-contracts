@@ -6,13 +6,13 @@ const BazaarERC1155Collection = artifacts.require("BazaarERC1155Collection");
 const web3 = require("web3");
 
 contract(
-  "Web3BazaarBatch Contract - testing all kinds of trades ",
+  "Web3BazaarEscrow Contract - testing all kinds of trades ",
   async (accounts) => {
     const WALLET_ADMIN = accounts[0];
     const WALLET_ONE = accounts[1];
     const WALLET_TWO = accounts[2];
 
-    it("Mint ERC20 tokens for Wallet One", async () => {
+    it("Mints ERC20 tokens for Wallet One", async () => {
       const BazcoinInstance = await Bazcoin.deployed();
       // console.log('bazcoin conctract address: ', BazcoinInstance.address );
       const assertBalance = 50e18;
@@ -27,7 +27,7 @@ contract(
       );
     });
 
-    it("Mint ERC721 Itens for Wallet Two", async () => {
+    it("Mints ERC721 Itens for Wallet Two", async () => {
       const TestCollectionInstance = await TestCollection.deployed();
       //console.log('bazcoin conctract address: ', TestCollectionInstance.address );
 
@@ -42,7 +42,7 @@ contract(
       assert.equal(MINT_IDS.length, toNumber, "should own 5 nfts");
     });
 
-    it("Mint ERC1155 Itens for Wallet Two", async () => {
+    it("Mints ERC1155 Items for Wallet Two", async () => {
       const BazaarERC1155CollectionInstance =
         await BazaarERC1155Collection.deployed();
       //console.log('bazcoin conctract address: ', TestCollectionInstance.address );
@@ -62,7 +62,7 @@ contract(
       assert.equal(10, toNumber, "Wallet Two MUST have 10 itens of id 3");
     });
 
-    it("Wallet One allow web3Bazaar contract to send funds", async () => {
+    it("Wallet One allows web3Bazaar contract to send funds", async () => {
       const BazcoinInstance = await Bazcoin.deployed();
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
       const allowanceLimit = 50e18;
@@ -137,7 +137,7 @@ contract(
       );
     });
 
-    it("SHOULD initializate trade between Wallet 1 (ERC20) and Wallet 2 (ERC1155 and ERC721)", async () => {
+    it("SHOULD start trade between Wallet One (ERC20) and Wallet Two (ERC1155 and ERC721)", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
       let bazCoinAddress = (await Bazcoin.deployed()).address;
       let erc721Address = (await TestCollection.deployed()).address;
@@ -185,7 +185,7 @@ contract(
       );
     });
 
-    it("SHOULD execute trade with sucess and tranfer nft to wallet ONE", async () => {
+    it("SHOULD execute trade sucessfully and transfer NFT to wallet One", async () => {
       const tradeId = 1;
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
       const TestCollectionInstance = await TestCollection.deployed();
@@ -203,11 +203,11 @@ contract(
         // console.log("Trade Info ", tradeInfo[2]);
         // console.log("Owner of tokenId 1 ", ownerOf);
         assert.equal(tradeInfo[2], 2, "Trade SHOULD be executed");
-        assert.equal(ownerOf, WALLET_ONE, "Owner Of Id should be wallet one");
+        assert.equal(ownerOf, WALLET_ONE, "Owner Of Id should be wallet One");
       } catch (error) {}
     });
 
-    it("Wallet One needs to allow bazaar to tranfer NFT", async () => {
+    it("Wallet One needs to allow bazaar to transfer NFT", async () => {
       const TestCollectionInstance = await TestCollection.deployed();
       const BazaarERC1155CollectionInstance =
         await BazaarERC1155Collection.deployed();
@@ -254,7 +254,7 @@ contract(
     });
 
     /// BEGIN  ERROR section
-    it("SHOULD throw error initializate trade - executer address is 0", async () => {
+    it("SHOULD return an error starting a trade - executor address is 0", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -291,7 +291,7 @@ contract(
         //console.log("error ", error.message);
         const isReverting =
           error.message.search(
-            "WEB3BAZAAR_ERROR: EXECUTER_ADDRESS_NOT_VALID"
+            "WEB3BAZAAR_ERROR: EXECUTOR_ADDRESS_NOT_VALID"
           ) >= 0;
         assert.equal(isReverting, true, "Should revert start trade");
         return;
@@ -299,7 +299,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - CREATOR_AND_EXECUTER_ARE_EQUAL", async () => {
+    it("SHOULD return an error starting a trade - CREATOR_AND_EXECUTOR_ARE_EQUAL", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -340,7 +340,7 @@ contract(
         //console.log("error ", error.message);
         const isReverting =
           error.message.search(
-            "WEB3BAZAAR_ERROR: CREATOR_AND_EXECUTER_ARE_EQUAL"
+            "WEB3BAZAAR_ERROR: CREATOR_AND_EXECUTOR_ARE_EQUAL"
           ) >= 0;
         assert.equal(isReverting, true, "Should revert start trade");
         return;
@@ -348,7 +348,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - CREATOR_TOKEN_ADDRESS_EMPTY", async () => {
+    it("SHOULD return an error starting a trade - CREATOR_TOKEN_ADDRESS_EMPTY", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -388,7 +388,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - EXECUTER_TOKEN_ADDRESS_EMPTY", async () => {
+    it("SHOULD return an error starting a trade - EXECUTOR_TOKEN_ADDRESS_EMPTY", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -437,7 +437,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - WEB3BAZAR_PARMS:CREATOR_PARMS_LEN_ERROR", async () => {
+    it("SHOULD return an error starting a trade - WEB3BAZAR_PARMS:CREATOR_PARMS_LEN_ERROR", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -484,7 +484,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - WEB3BAZAR_PARMS:EXECUTER_PARMS_LEN_ERROR", async () => {
+    it("SHOULD return an error starting a trade - WEB3BAZAR_PARMS:EXECUTOR_PARMS_LEN_ERROR", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -531,7 +531,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - WEB3BAZAAR_ERROR: CONTRACT_TOKEN_ADDRESS_IS_ZERO creator", async () => {
+    it("SHOULD return an error starting a trade - WEB3BAZAAR_ERROR: CONTRACT_TOKEN_ADDRESS_IS_ZERO creator", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -580,7 +580,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - WEB3BAZAR_ERROR: NOT_VALID_TRADE_TYPE creator", async () => {
+    it("SHOULD return an error starting a trade - WEB3BAZAR_ERROR: NOT_VALID_TRADE_TYPE creator", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -627,7 +627,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - WEB3BAZAR_ERROR: TOKENID_MUST_POSITIVE creator", async () => {
+    it("SHOULD return an error starting a trade - WEB3BAZAR_ERROR: TOKENID_MUST_POSITIVE creator", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -674,7 +674,7 @@ contract(
       assert.fail("Expected throw not received");
     });
 
-    it("SHOULD throw error initializate trade - WEB3BAZAR_ERROR: AMOUNT_MUST_POSITIVE creator", async () => {
+    it("SHOULD return an error starting a trade - WEB3BAZAR_ERROR: AMOUNT_MUST_POSITIVE creator", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -723,7 +723,7 @@ contract(
 
     /// Ending error section
 
-    it("SHOULD initializate trade on reverse way Wallet 2 (ERC20) and WALLET 1 (ERC1155 and ERC721)", async () => {
+    it("SHOULD create a new trade to revert Wallet 2 (ERC20) and WALLET 1 (ERC1155 and ERC721) assets ownership", async () => {
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
 
       let bazCoinAddress = (await Bazcoin.deployed()).address;
@@ -765,7 +765,7 @@ contract(
       assert.equal(tradeInfo[0], WALLET_ONE, "Creator MUST be wallet one");
     });
 
-    it("SHOULD throw and error when execute trade cause Wallet two tranfer all tokens", async () => {
+    it("SHOULD return an error executing a trade because Wallet Two tranfered all tokens", async () => {
       const tradeId = 2;
       const BazcoinInstance = await Bazcoin.deployed();
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
@@ -797,7 +797,7 @@ contract(
     });
 
     ///execute trade with sucess
-    it("SHOULD execute trade with success and tranfer nft back to wallet two", async () => {
+    it("SHOULD execute trade successfully and transfer NFT back to wallet two", async () => {
       const tradeId = 2;
       const BazcoinInstance = await Bazcoin.deployed();
       const BazaarEscrowInstance = await Web3BazaarBatch.deployed();
