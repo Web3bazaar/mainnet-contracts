@@ -104,9 +104,9 @@ contract Web3BazaarEscrow is
 
     // External functions
 
-    /// Set number of asset per trade
-    /// @param newMaxAseetPerTrade the new value to store
-    /// @dev set max number of asset per trade need to be less then 1000
+    /// assetPerTrade - Sets max amount of assets allowed per trade
+    /// @param newMaxAseetPerTrade updates with a new value 
+    /// @dev sets mmax amount of assets allowed per trade. Needs to be  <=1,000
     function setAssetPerTrade(uint256 newMaxAseetPerTrade) external isOwner {
         require(
             newMaxAseetPerTrade > 1 &&
