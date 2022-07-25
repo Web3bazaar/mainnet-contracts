@@ -89,7 +89,7 @@ contract(
       );
     });
 
-    it("Wallet Two needs to allow bazaar to tranfer NFT", async () => {
+    it("Wallet Two needs to allow bazaar to transfer NFT", async () => {
       const TestCollectionInstance = await TestCollection.deployed();
       const BazaarERC1155CollectionInstance =
         await BazaarERC1155Collection.deployed();
