@@ -4,16 +4,16 @@
 
 This repo contains the solidity code used in the Bazaar smart contracts hosted on the compatible EVM mainnets.
 
-### Project command list
+### Command list
 
 |     | Command              | Description                                                           |
 | --- | -------------------- | --------------------------------------------------------------------- |
-| 1   | npm install          | Install depencies                                                     |
-|     | truffle run coverage | Run tests and coverage report                                         |
-|     | truffle compile      | Compile contracts                                                     |
-|     | truffle test         | Run tests for the contract (start truffle develop command-line first) |
-|     | deployMumbai         | Deploy contract on mumbai (need to create .privKey with private key)  |
-|     | verifyMumbai         | Verify contract and publish code on polyscan                          |
+| 1   | npm install          | Installs dependencies                                                     |
+|     | truffle run coverage | Runs tests and coverage report                                         |
+|     | truffle compile      | Compiles contracts                                                     |
+|     | truffle test         | Runs tests for the contract (start truffle dev command-line first) |
+|     | deployMumbai         | Deploys contract on mumbai (need to create .privKey with private key)  |
+|     | verifyMumbai         | Verifies contract and publishes code on polyscan                          |
 
 ## 📝 About the Bazaar
 
