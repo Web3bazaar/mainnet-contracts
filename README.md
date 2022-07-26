@@ -9,15 +9,15 @@ This repo contains the solidity code used in the Bazaar smart contracts hosted o
 |     | Command              | Description                                                           |
 | --- | -------------------- | --------------------------------------------------------------------- |
 | 1   | npm install          | Installs dependencies                                                     |
-|     | truffle run coverage | Runs tests and coverage report                                         |
-|     | truffle compile      | Compiles contracts                                                     |
-|     | truffle test         | Runs tests for the contract (start truffle dev command-line first) |
-|     | deployMumbai         | Deploys contract on mumbai (need to create .privKey with private key)  |
-|     | verifyMumbai         | Verifies contract and publishes code on polyscan                          |
+| 2   | truffle run coverage | Runs tests and coverage report                                         |
+| 3   | truffle compile      | Compiles contracts                                                     |
+| 4   | truffle test         | Runs tests for the contract (start truffle dev command-line first) |
+| 5   | deployMumbai         | Deploys contract on mumbai (need to create .privKey with private key)  |
+| 6   | verifyMumbai         | Verifies contract and publishes code on polyscan                          |
 
 ## 📝 About the Bazaar
 
-The Web3 Bazaar dApp is supported by non-custodial escrow contracts that enable peer-to-peer swaps of ERC-20, ERC-721 or ERC-1155 tokens. Contracts' only purpose is to switch asset ownership from one wallet address to another under the trades pre-established in it.
+The Web3 Bazaar is a dApp supported by non-custodial escrow contracts that enable peer-to-peer swaps of ERC-20, ERC-721 or ERC-1155 tokens. The contracts' only purpose is to swap asset ownership from one wallet address to another under according to the terms pre-established by both parties.
 
 ### Bazaar contracts are:
 
