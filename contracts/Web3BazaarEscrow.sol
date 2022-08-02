@@ -51,7 +51,7 @@ contract Web3BazaarEscrow is
 
     uint256 private _tradeId;
     mapping(uint256 => Trade) internal _transactions;
-    mapping(address => uint256[]) internal _openTrades;
+    mapping(address => uint256[]) internal _allTradesPerUser;
 
     uint256 private constant MAX_ASSET_PER_TRADE = 1000;
     uint256 public openTradeCount;
@@ -105,7 +105,7 @@ contract Web3BazaarEscrow is
     // External functions
 
     /// assetPerTrade - Sets max amount of assets allowed per trade
-    /// @param newMaxAseetPerTrade updates with a new value 
+    /// @param newMaxAseetPerTrade updates with a new value
     /// @dev sets mmax amount of assets allowed per trade. Needs to be  <=1,000
     function setAssetPerTrade(uint256 newMaxAseetPerTrade) external isOwner {
         require(
@@ -131,8 +131,8 @@ contract Web3BazaarEscrow is
             "WEB3BAZAAR_ERROR: EXECUTER ISNT CREATOR OR EXECUTER"
         );
 
-        removeTradeForUser(_transactions[tradeId].executor, tradeId);
-        removeTradeForUser(_transactions[tradeId].creator, tradeId);
+        // removeTradeForUser(_transactions[tradeId].executor, tradeId);
+        // removeTradeForUser(_transactions[tradeId].creator, tradeId);
 
         _transactions[tradeId].tradeStatus = TradeStatus.TRADE_CANCELLED;
         openTradeCount = openTradeCount - 1;
@@ -225,8 +225,8 @@ contract Web3BazaarEscrow is
             }
         }
         _transactions[_tradeId].tradeStatus = TradeStatus.TRADE_COMPLETED;
-        removeTradeForUser(msg.sender, tradeId);
-        removeTradeForUser(_transactions[tradeId].creator, tradeId);
+        //removeTradeForUser(msg.sender, tradeId);
+        //removeTradeForUser(_transactions[tradeId].creator, tradeId);
         totalCompletedTrade = totalCompletedTrade + 1;
         openTradeCount = openTradeCount - 1;
         emit FinishTrade(msg.sender, tradeId);
@@ -410,8 +410,8 @@ contract Web3BazaarEscrow is
                 .traderStatus = UserStatus.OPEN;
         }
         _transactions[_tradeId].tradeStatus = TradeStatus.TRADE_CREATED;
-        _openTrades[creatorAddress].push(_tradeId);
-        _openTrades[executerAddress].push(_tradeId);
+        _allTradesPerUser[creatorAddress].push(_tradeId);
+        _allTradesPerUser[executerAddress].push(_tradeId);
         emit NewTrade(creatorAddress, executerAddress, _tradeId);
         openTradeCount = openTradeCount + 1;
         return _tradeId;

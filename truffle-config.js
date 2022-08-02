@@ -28,6 +28,18 @@ module.exports = {
       timeoutBlocks: 200,
       skipDryRun: true,
     },
+    matic: {
+      provider: () =>
+        new HDWalletProvider(
+          privKey,
+          "https://rpc-mainnet.maticvigil.com/v1/b22946af83eb7e2498773672df08b8216e60aa07"
+        ),
+      gasPrice: 6001928,
+      network_id: 137,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
+    },
   },
   //
   // Truffle DB is currently disabled by default; to enable it, change enabled:
@@ -58,12 +70,13 @@ module.exports = {
         // See the solidity docs for advice about optimization and evmVersion
         optimizer: {
           enabled: true,
-          runs: 200,
+          runs: 400,
         },
-        // evmVersion: "byzantium",
+        evmVersion: "byzantium",
       },
     },
   },
+
   plugins: ["solidity-coverage", "truffle-plugin-verify"],
   api_keys: {
     etherscan: "",

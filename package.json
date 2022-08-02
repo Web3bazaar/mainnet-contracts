@@ -12,7 +12,9 @@
     "coverage": "truffle run coverage",
     "deployMumbai": "truffle migrate --network mumbai",
     "deployMatic": "truffle migrate --network matic --verbose-rpc --interactive --skip-dry-run --reset",
-    "verifyMumbai" : "truffle run verify Web3BazaarEscrow --network mumbai"
+    "verifyMumbai" : "truffle run verify Web3BazaarEscrow --network mumbai",
+    "resetDeploy"  : "truffle deploy --reset --network mumbai",
+    "deployRaffle"  : "truffle migrate -f 3 --to 3 --network mumbai"
   },
   "author": "drbrown",
   "license": "ISC",
