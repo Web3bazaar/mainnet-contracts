@@ -102,8 +102,6 @@ contract Web3BazaarEscrow is
         numAssetsPerTrade = 100;
     }
 
-    // External functions
-
     /// assetPerTrade - Sets max amount of assets allowed per trade
     /// @param newMaxAseetPerTrade updates with a new value
     /// @dev sets mmax amount of assets allowed per trade. Needs to be  <=1,000
@@ -130,9 +128,6 @@ contract Web3BazaarEscrow is
             store.executor == msg.sender || store.creator == msg.sender,
             "WEB3BAZAAR_ERROR: EXECUTER ISNT CREATOR OR EXECUTER"
         );
-
-        // removeTradeForUser(_transactions[tradeId].executor, tradeId);
-        // removeTradeForUser(_transactions[tradeId].creator, tradeId);
 
         _transactions[tradeId].tradeStatus = TradeStatus.TRADE_CANCELLED;
         openTradeCount = openTradeCount - 1;
@@ -417,8 +412,6 @@ contract Web3BazaarEscrow is
         return _tradeId;
     }
 
-    // External visible functions
-
     /// getTrade - this method returns data about the trade based on tradeId
     /// @param tradeId to obtain information
     /// @dev indexes and returns information about the trade
@@ -482,21 +475,13 @@ contract Web3BazaarEscrow is
         );
     }
 
-    /// tradePerUser - Returns all open trades for a given wallet address
-    /// @param u to check open trades based on wallet address
-    /// @dev returns all trades open for an address stored in the _openTrades index
-    /// @return all trades open for a user
+    /// tradePerUser - Returns all trades for a given wallet address
+    /// @param u to check trades based on wallet address
+    /// @dev returns all trades for an address stored in the _allTradesPerUser index
+    /// @return all trades for a user
     function tradePerUser(address u) external view returns (uint256[] memory) {
-        return (_openTrades[u]);
+        return (_allTradesPerUser[u]);
     }
-
-    // External functions that are pure
-    // ...
-
-    /// public function
-    /// ...
-
-    /// internal function
 
     /// verifyERC721 - verifies ERC721 token ownership from wallet address
     /// @param from for wallet address
@@ -644,28 +629,7 @@ contract Web3BazaarEscrow is
         return true;
     }
 
-    /// private functions
-
-    /// removeTradeForUser - remove an open trade from _openTrades array
-    /// @param u user address to check open trades
-    /// @param tradeId  from the trade you want to remove
-    /// @dev retrieves the value of the state of the variable `storedData`
-    function removeTradeForUser(address u, uint256 tradeId) private {
-        uint256[] memory userTrades = _openTrades[u];
-
-        if (_openTrades[u].length == 1) {
-            _openTrades[u][0] = 0;
-        } else {
-            for (uint256 i = 0; i < userTrades.length - 1; i++) {
-                if (userTrades[i] == tradeId) {
-                    _openTrades[u][i] = _openTrades[u][userTrades.length - 1];
-                    _openTrades[u].pop();
-                }
-            }
-        }
-    }
-
-    /// vverifyTradeIntegrity- verifies integrety of data from tokens be swapped
+    /// verifyTradeIntegrity- verifies integrety of data from tokens be swapped
     /// @param tokenAddress  to check open trades for wallet address
     /// @param tokenId from the trade you want to remove
     /// @param amount tradeId from the trade you want to remove

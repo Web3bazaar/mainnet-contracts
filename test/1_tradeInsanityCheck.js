@@ -398,7 +398,7 @@ contract(
         //console.log("openTrades after second execution: ", openTrades);
         assert.equal(
           trades2.length,
-          2,
+          3,
           "Open trades for wallet one should be 2"
         );
       } catch (ex) {

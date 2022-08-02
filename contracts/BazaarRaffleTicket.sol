@@ -17,7 +17,7 @@ contract BazaarRaffleTicket is
     // Base URI
     string private _baseURIextended;
     string private _contractURI;
-    uint256 public constant MAX_SUPPLY;
+    uint256 public constant MAX_SUPPLY = 100000;
     // address
     address public _projectTokenAddress;
     address public _bazaarContract;
@@ -41,7 +41,6 @@ contract BazaarRaffleTicket is
         id = 1;
         _contractURI = "https://raw.githubusercontent.com/Web3bazaar/giveways/main/projects/aavegotchi/contract";
         _baseURIextended = "https://raw.githubusercontent.com/Web3bazaar/giveways/main/projects/aavegotchi/data/";
-        MAX_SUPPLY = 100000;
 
         //mumbai network
         _projectTokenAddress = 0x89A84dc58ABA7909818C471B2EbFBc94e6C96c41;
