@@ -30,7 +30,7 @@ The Web3 Bazaar is a dApp supported by non-custodial escrow contracts that enabl
 
 | Network | Contract address                                                                                                         |
 | ------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Polygon | [0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44](https://polygonscan.com/address/0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44) |
+| Polygon | [0x93cdc98317A07e83a9AA96F69AdA7Af4b37EBf44](https://polygonscan.com/address/0xa80e4eA13aC0d8Fb1bfD1f57697cB49B445eF8Db) |
 
 ## 🧞 smart contract features:
 
